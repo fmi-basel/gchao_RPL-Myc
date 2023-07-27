@@ -1,0 +1,19 @@
+name: rpl-myc
+channels:
+  - conda-forge
+dependencies:
+  - python=3.9
+  - pydantic=1.10.10
+  - pyyaml
+  - scikit-image
+  - numpy<1.25
+  - tifffile
+  - pandas
+  - aicsimageio
+  - bioformats_jar
+  - matplotlib
+  - tqdm
+  - iprogress
+  - ipywidgets
+  - ptitprince
+  - questionary
