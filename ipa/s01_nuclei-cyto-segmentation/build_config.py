@@ -8,7 +8,7 @@ def build_config():
     raw_data_dir = questionary.path("Path to raw data directory:").ask()
     output_dir = questionary.path("Path to output directory:").ask()
 
-    output_dir = os.path.join(output_dir, "02_nuclei-cyto-segmentation")
+    output_dir = os.path.join(output_dir, "01_nuclei-cyto-segmentation")
 
     config = {
         "raw_data_dir": os.path.relpath(raw_data_dir, cwd),

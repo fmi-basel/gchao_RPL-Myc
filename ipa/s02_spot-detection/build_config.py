@@ -8,22 +8,22 @@ def build_config():
     raw_data_dir = questionary.path("Path to raw data directory:").ask()
     nuc_cyto_seg_dir = questionary.path("Path to nuc & cyto segmentation directory:").ask()
     h_01 = float(questionary.text(
-        "Spot height relativ to background C01:",
+        "Spot height relativ to background C02:",
         default="357",
         validate=lambda v: v.replace(".", "").isdigit()
         ).ask())
     h_02 = float(questionary.text(
-        "Spot height relativ to background C02:",
+        "Spot height relativ to background C03:",
         default="681",
         validate=lambda v: v.replace(".", "").isdigit()
         ).ask())
     wl_01 = int(questionary.text(
-        "Emission wavelength C01:",
+        "Emission wavelength C02:",
         default="640",
         validate=lambda v: v.isdigit()
         ).ask())
     wl_02 = int(questionary.text(
-        "Emission wavelength C02:",
+        "Emission wavelength C03:",
         default="561",
         validate=lambda v: v.isdigit()
         ).ask())
@@ -34,7 +34,7 @@ def build_config():
         ).ask())
     output_dir = questionary.path("Path to output directory:").ask()
 
-    output_dir = os.path.join(output_dir, "03_spot-detection")
+    output_dir = os.path.join(output_dir, "02_spot-detection")
 
     config = {
         "raw_data_dir": os.path.relpath(raw_data_dir, cwd),
