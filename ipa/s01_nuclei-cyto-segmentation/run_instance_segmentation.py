@@ -99,14 +99,14 @@ def segment_nuclei_and_cyto(file: str, output_dir: str):
     img = AICSImage(file)
 
     logger.info('Segment nuclei in 3D.')
-    nuc_labeling = segment_nuclei_3d(img.data[0, 2])
+    nuc_labeling = segment_nuclei_3d(img.data[0, 0])
 
     clean_nuc_labeling = clean_nuc_labeling_3d(nuc_labeling)
 
     clean_labeling_2d = clear_border(np.max(clean_nuc_labeling, axis=0))
 
     logger.info('Segment cytoplasma in 2D.')
-    cyto_labeling_2d = segment_cyto_2d(img.data[0, :2], np.max(nuc_labeling, axis=0))
+    cyto_labeling_2d = segment_cyto_2d(img.data[0, 1:], np.max(nuc_labeling, axis=0))
 
     logger.info('Clean up labelings.')
     clean_nuc_labeling, clean_nuc_labeling_2d, clean_cyto_labeling_2d = clean_nuc_cyto_labelings(

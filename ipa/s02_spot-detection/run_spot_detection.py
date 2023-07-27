@@ -28,8 +28,8 @@ def run_spot_detection(file: str, nuc_cyto_seg_dir: str, h_01: float, h_02: floa
 
     logger.info(f"Loading image data from: {file}")
     img = AICSImage(file)
-    raw_01 = img.data[0, 0]
-    raw_02 = img.data[0, 1]
+    raw_01 = img.data[0, 1]
+    raw_02 = img.data[0, 2]
 
     logger.info(f"Loading nuclei segmentation from: {nuc_seg_file}")
     nuc_seg = imread(nuc_seg_file)
