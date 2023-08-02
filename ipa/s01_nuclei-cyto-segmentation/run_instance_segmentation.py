@@ -144,24 +144,24 @@ if __name__ == "__main__":
 
     logger.info(f'Found {len(files)} files for processing.')
 
-    # pool = multiprocessing.Pool(8)
+    pool = multiprocessing.Pool(8)
     progress = tqdm(total=len(files), smoothing=0)
     for file in files:
-        # pool.apply_async(
-        #     segment_nuclei_and_cyto,
-        #     kwds={
-        #         "file": file,
-        #         "output_dir": config['output_dir'],
-        #     },
-        #     callback=lambda _: progress.update()
-        # )
-        segment_nuclei_and_cyto(
-            file=file,
-            output_dir=config['output_dir']
+        pool.apply_async(
+            segment_nuclei_and_cyto,
+            kwds={
+                "file": file,
+                "output_dir": config['output_dir'],
+            },
+            callback=lambda _: progress.update()
         )
-        progress.update()
+        # segment_nuclei_and_cyto(
+        #     file=file,
+        #     output_dir=config['output_dir']
+        # )
+        # progress.update()
 
-    # pool.close()
-    # pool.join()
+    pool.close()
+    pool.join()
 
     logger.info('Done!')
