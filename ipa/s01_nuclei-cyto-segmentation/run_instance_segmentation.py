@@ -101,8 +101,10 @@ def segment_nuclei_and_cyto(file: str, output_dir: str):
     logger.info('Segment nuclei in 3D.')
     nuc_labeling = segment_nuclei_3d(img.data[0, 0])
 
+    logger.info('Clean 3D nuclei labels.')
     clean_nuc_labeling = clean_nuc_labeling_3d(nuc_labeling)
 
+    logger.info('Clear border.')
     clean_labeling_2d = clear_border(np.max(clean_nuc_labeling, axis=0))
 
     logger.info('Segment cytoplasma in 2D.')
@@ -142,19 +144,24 @@ if __name__ == "__main__":
 
     logger.info(f'Found {len(files)} files for processing.')
 
-    pool = multiprocessing.Pool(8)
+    # pool = multiprocessing.Pool(8)
     progress = tqdm(total=len(files), smoothing=0)
     for file in files:
-        pool.apply_async(
-            segment_nuclei_and_cyto,
-            kwds={
-                "file": file,
-                "output_dir": config['output_dir'],
-            },
-            callback=lambda _: progress.update()
+        # pool.apply_async(
+        #     segment_nuclei_and_cyto,
+        #     kwds={
+        #         "file": file,
+        #         "output_dir": config['output_dir'],
+        #     },
+        #     callback=lambda _: progress.update()
+        # )
+        segment_nuclei_and_cyto(
+            file=file,
+            output_dir=config['output_dir']
         )
+        progress.update()
 
-    pool.close()
-    pool.join()
+    # pool.close()
+    # pool.join()
 
     logger.info('Done!')
