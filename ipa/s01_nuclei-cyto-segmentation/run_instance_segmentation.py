@@ -70,7 +70,7 @@ def clean_nuc_labeling_3d(labeling, spacing=(0.2, 0.103, 0.103)):
 
     clean_labeling = copy(labeling)
 
-    for ft in tqdm(features, leave=False):
+    for ft in features:
         if ft.area < 200:
             clean_labeling[clean_labeling == ft.label] = 0
         elif ft.solidity < 0.5:
