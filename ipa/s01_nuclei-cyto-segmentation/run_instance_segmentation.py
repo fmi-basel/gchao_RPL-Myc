@@ -3,11 +3,11 @@ from glob import glob
 import multiprocessing
 
 from skimage.filters import threshold_triangle, median
-from skimage.measure import label, regionprops_table, regionprops
-from skimage.morphology import binary_opening, remove_small_holes, area_opening, disk, binary_erosion
+from skimage.measure import label, regionprops
+from skimage.morphology import binary_opening, remove_small_holes, area_opening, disk, ball, binary_erosion
 from skimage.segmentation import clear_border, watershed
 
-from scipy.ndimage import distance_transform_edt
+from scipy.ndimage import distance_transform_edt, gaussian_filter
 
 import pandas as pd
 import numpy as np
@@ -39,17 +39,25 @@ def threshold_mad(im: np.ndarray, k=6):
 
 
 def segment_nuclei_3d(img):
-    ths = threshold_mad(img)
-    mask = median(img, np.ones((3, 3, 3))) > ths
-    mask = remove_small_holes(area_opening(binary_opening(mask, footprint=np.ones((3,3,3))), 100), 100)
+    ths = threshold_triangle(img)
+    mask = binary_erosion(gaussian_filter(img, axes=(1,2), sigma=3) > ths, footprint=ball(4))
+    labeling = label(mask)
+    features = regionprops(labeling)
+    for ft in features:
+        if ft.area < 500:
+            labeling[labeling == ft.label] = 0
+    mask = remove_small_holes(labeling > 0, 100)
     distance = distance_transform_edt(mask)
     eroded = np.max(mask, axis=0)
-    for i in range(10):
+    done = False
+    while not done:
         features = regionprops(label(eroded))
+        done = True
         for ft in features:
             if ft.area > 500:
+                done = False
                 bb = ft.bbox
-                eroded[bb[0]:bb[2], bb[1]:bb[3]] = binary_erosion(ft.image, footprint=np.ones((7,7)))
+                eroded[bb[0]:bb[2], bb[1]:bb[3]] = binary_erosion(ft.image, footprint=disk(2))
 
     seeds = np.zeros_like(distance, dtype=int)
     seeds[seeds.shape[0]//2] = eroded
@@ -57,12 +65,12 @@ def segment_nuclei_3d(img):
     return watershed(-distance, seeds, mask=mask)
 
 
-def clean_nuc_labeling_3d(labeling, spacing=(0.24, 0.107, 0.107)):
+def clean_nuc_labeling_3d(labeling, spacing=(0.2, 0.103, 0.103)):
     features = regionprops(labeling, spacing=spacing)
 
     clean_labeling = copy(labeling)
 
-    for ft in features:
+    for ft in tqdm(features, leave=False):
         if ft.area < 200:
             clean_labeling[clean_labeling == ft.label] = 0
         elif ft.solidity < 0.5:
