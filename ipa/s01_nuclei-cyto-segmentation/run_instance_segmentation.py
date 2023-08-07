@@ -1,3 +1,4 @@
+from time import sleep
 from aicsimageio import AICSImage
 from glob import glob
 import multiprocessing
@@ -163,6 +164,7 @@ if __name__ == "__main__":
             },
             callback=lambda _: progress.update()
         )
+        sleep(2)
         # segment_nuclei_and_cyto(
         #     file=file,
         #     output_dir=config['output_dir']
