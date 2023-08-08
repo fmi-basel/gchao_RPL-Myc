@@ -39,8 +39,10 @@ def run_spot_detection(file: str, nuc_cyto_seg_dir: str, h_01: float, h_02: floa
     sx = img.ome_metadata.dict()['images'][0]['pixels']['physical_size_x']
     sy = img.ome_metadata.dict()['images'][0]['pixels']['physical_size_y']
     sz = img.ome_metadata.dict()['images'][0]['pixels']['physical_size_z']
-    spacing = tuple([sz, sy, sx])
-    logger.info(f"Image spacing determined from metadata [Z, Y, X]: {spacing}")
+    # spacing = tuple([sz, sy, sx])
+    spacing = tuple([0.2, 0.103, 0.103])
+    # logger.info(f"Image spacing determined from metadata [Z, Y, X]: {spacing}")
+    logger.warning(f"Hard coded image spacing [Z, Y, X]: {spacing}")
 
     cells_01 = crop_cells(raw_01, cyto_seg, nuc_seg)
     cells_02 = crop_cells(raw_02, cyto_seg, nuc_seg)
