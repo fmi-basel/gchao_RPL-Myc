@@ -7,6 +7,16 @@ def build_config():
 
     raw_data_dir = questionary.path("Path to raw data directory:").ask()
     nuc_cyto_seg_dir = questionary.path("Path to nuc & cyto segmentation directory:").ask()
+    channel_index_spots_1 = int(questionary.text(
+        "Index of first spot channel:",
+        default="1",
+        validate=lambda v: v.isdigit()
+        ).ask())
+    channel_index_spots_2 = int(questionary.text(
+        "Index of second spot channel:",
+        default="2",
+        validate=lambda v: v.isdigit()
+        ).ask())
     h_01 = float(questionary.text(
         "Spot height relativ to background C02:",
         default="357",
@@ -47,6 +57,8 @@ def build_config():
     config = {
         "raw_data_dir": os.path.relpath(raw_data_dir, cwd),
         "nuc_cyto_seg_dir": os.path.relpath(nuc_cyto_seg_dir, cwd),
+        "channel_index_spots_1": channel_index_spots_1,
+        "channel_index_spots_2": channel_index_spots_2,
         "h_01": h_01,
         "h_02": h_02,
         "wl_01": wl_01,

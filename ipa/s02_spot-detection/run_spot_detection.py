@@ -21,17 +21,19 @@ handler.setFormatter(formatter)
 logger.addHandler(handler)
 
 
-def run_spot_detection(file: str, nuc_cyto_seg_dir: str, h_01: float,
-                       h_02: float, wl_01: int, wl_02: int, NA: float,
-                       spacing: tuple[float, float, float], output_dir: str):
+def run_spot_detection(file: str, nuc_cyto_seg_dir: str,
+                       channel_index_spots_1: int, channel_index_spots_2: int,
+                       h_01: float, h_02: float, wl_01: int, wl_02: int,
+                       NA: float, spacing: tuple[float, float, float],
+                       output_dir: str):
     name, _ = os.path.splitext(os.path.basename(file))
     nuc_seg_file = os.path.join(nuc_cyto_seg_dir, name + "_NUC-SEG-3D.tif")
     cyto_seg_file = os.path.join(nuc_cyto_seg_dir, name + "_CYTO-SEG-2D.tif")
 
     logger.info(f"Loading image data from: {file}")
     img = AICSImage(file)
-    raw_01 = img.data[0, 1]
-    raw_02 = img.data[0, 2]
+    raw_01 = img.data[0, channel_index_spots_1]
+    raw_02 = img.data[0, channel_index_spots_2]
 
     logger.info(f"Loading nuclei segmentation from: {nuc_seg_file}")
     nuc_seg = imread(nuc_seg_file)
@@ -66,6 +68,8 @@ if __name__ == "__main__":
             kwds={
                 "file":file,
                 "nuc_cyto_seg_dir": config['nuc_cyto_seg_dir'],
+                "channel_index_spots_1": config['channel_index_spots_1'],
+                "channel_index_spots_2": config['channel_index_spots_2'],
                 "h_01": config['h_01'],
                 "h_02": config['h_02'],
                 "wl_01": config['wl_01'],
