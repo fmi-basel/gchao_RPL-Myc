@@ -7,6 +7,16 @@ def build_config():
 
     raw_data_dir = questionary.path("Path to raw data directory:").ask()
     nuc_cyto_seg_dir = questionary.path("Path to nuc & cyto segmentation directory:").ask()
+    channel_index_spots_1 = int(questionary.text(
+        "Index of first spot channel:",
+        default="1",
+        validate=lambda v: v.isdigit()
+        ).ask())
+    channel_index_spots_2 = int(questionary.text(
+        "Index of second spot channel:",
+        default="2",
+        validate=lambda v: v.isdigit()
+        ).ask())
     h_01 = float(questionary.text(
         "Spot height relativ to background C02:",
         default="357",
@@ -32,6 +42,14 @@ def build_config():
         default="1.4",
         validate=lambda v: v.replace(".", "").isdigit()
         ).ask())
+    spacing_str = questionary.text(
+        "Spacing (z, y, x):",
+        default="0.2, 0.103, 0.103",
+        validate=lambda v: v.replace(" ", "").replace(",", "").replace(".",
+                                                                       "").isdigit()
+    ).ask()
+    spacing = tuple(float(v) for v in spacing_str.split(","))
+
     output_dir = questionary.path("Path to output directory:").ask()
 
     output_dir = os.path.join(output_dir, "02_spot-detection")
@@ -39,12 +57,15 @@ def build_config():
     config = {
         "raw_data_dir": os.path.relpath(raw_data_dir, cwd),
         "nuc_cyto_seg_dir": os.path.relpath(nuc_cyto_seg_dir, cwd),
+        "channel_index_spots_1": channel_index_spots_1,
+        "channel_index_spots_2": channel_index_spots_2,
         "h_01": h_01,
         "h_02": h_02,
         "wl_01": wl_01,
         "wl_02": wl_02,
         "NA": NA,
         "output_dir": os.path.relpath(output_dir, cwd),
+        "spacing": spacing,
     }
 
     os.makedirs(output_dir)
