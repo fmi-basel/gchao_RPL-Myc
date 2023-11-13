@@ -32,6 +32,14 @@ def build_config():
         default="1.4",
         validate=lambda v: v.replace(".", "").isdigit()
         ).ask())
+    spacing_str = questionary.text(
+        "Spacing (z, y, x):",
+        default="0.2, 0.103, 0.103",
+        validate=lambda v: v.replace(" ", "").replace(",", "").replace(".",
+                                                                       "").isdigit()
+    ).ask()
+    spacing = tuple(float(v) for v in spacing_str.split(","))
+
     output_dir = questionary.path("Path to output directory:").ask()
 
     output_dir = os.path.join(output_dir, "02_spot-detection")
@@ -45,6 +53,7 @@ def build_config():
         "wl_02": wl_02,
         "NA": NA,
         "output_dir": os.path.relpath(output_dir, cwd),
+        "spacing": spacing,
     }
 
     os.makedirs(output_dir)

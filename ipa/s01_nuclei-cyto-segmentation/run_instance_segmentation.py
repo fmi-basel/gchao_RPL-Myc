@@ -103,7 +103,7 @@ def clean_nuc_cyto_labelings(nuc_labeling_3d, nuc_labeling_2d, cyto_labeling_2d)
 
     return clean_nuc_labeling, clean_nuc_labeling_2d, clean_cyto_labeling_2d
 
-def segment_nuclei_and_cyto(file: str, output_dir: str):
+def segment_nuclei_and_cyto(file: str, output_dir: str, spacing: tuple[float, float, float]):
     logger.info(f'Load image from: {file}')
     img = AICSImage(file)
 
@@ -111,7 +111,7 @@ def segment_nuclei_and_cyto(file: str, output_dir: str):
     nuc_labeling = segment_nuclei_3d(img.data[0, 0])
 
     logger.info('Clean 3D nuclei labels.')
-    clean_nuc_labeling = clean_nuc_labeling_3d(nuc_labeling)
+    clean_nuc_labeling = clean_nuc_labeling_3d(nuc_labeling, spacing=spacing)
 
     logger.info('Clear border.')
     clean_labeling_2d = clear_border(np.max(clean_nuc_labeling, axis=0))
@@ -161,13 +161,15 @@ if __name__ == "__main__":
             kwds={
                 "file": file,
                 "output_dir": config['output_dir'],
+                "spacing": config['spacing'],
             },
             callback=lambda _: progress.update()
         )
         sleep(2)
         # segment_nuclei_and_cyto(
         #     file=file,
-        #     output_dir=config['output_dir']
+        #     output_dir=config['output_dir'],
+        #     spacing=config['spacing'],
         # )
         # progress.update()
 

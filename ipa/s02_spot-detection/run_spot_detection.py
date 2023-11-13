@@ -21,7 +21,9 @@ handler.setFormatter(formatter)
 logger.addHandler(handler)
 
 
-def run_spot_detection(file: str, nuc_cyto_seg_dir: str, h_01: float, h_02: float, wl_01: int, wl_02: int, NA: float, output_dir: str):
+def run_spot_detection(file: str, nuc_cyto_seg_dir: str, h_01: float,
+                       h_02: float, wl_01: int, wl_02: int, NA: float,
+                       spacing: tuple[float, float, float], output_dir: str):
     name, _ = os.path.splitext(os.path.basename(file))
     nuc_seg_file = os.path.join(nuc_cyto_seg_dir, name + "_NUC-SEG-3D.tif")
     cyto_seg_file = os.path.join(nuc_cyto_seg_dir, name + "_CYTO-SEG-2D.tif")
@@ -36,12 +38,6 @@ def run_spot_detection(file: str, nuc_cyto_seg_dir: str, h_01: float, h_02: floa
     logger.info(f"Loading cyto segmentation from: {cyto_seg_file}")
     cyto_seg = imread(cyto_seg_file)
 
-    sx = img.ome_metadata.dict()['images'][0]['pixels']['physical_size_x']
-    sy = img.ome_metadata.dict()['images'][0]['pixels']['physical_size_y']
-    sz = img.ome_metadata.dict()['images'][0]['pixels']['physical_size_z']
-    # spacing = tuple([sz, sy, sx])
-    spacing = tuple([0.2, 0.103, 0.103])
-    # logger.info(f"Image spacing determined from metadata [Z, Y, X]: {spacing}")
     logger.warning(f"Hard coded image spacing [Z, Y, X]: {spacing}")
 
     cells_01 = crop_cells(raw_01, cyto_seg, nuc_seg)
@@ -75,6 +71,7 @@ if __name__ == "__main__":
                 "wl_01": config['wl_01'],
                 "wl_02": config['wl_02'],
                 "NA": config['NA'],
+                "spacing": config['spacing'],
                 "output_dir": config['output_dir'],
             },
             callback=lambda _: progress.update()
